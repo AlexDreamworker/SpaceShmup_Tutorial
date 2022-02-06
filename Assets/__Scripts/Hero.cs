@@ -10,9 +10,13 @@ public class Hero : MonoBehaviour
     public float speed = 30;
     public float rollMult = -45;
     public float pitchMult = 30;
+    public float gameRestartDelay = 2f;
 
     [Header("Set Dynamically")]
-    public float shieldLevel = 1;
+    [SerializeField] private float _shieldLevel = 1;
+
+    // Переменная хранит ссылку на последний столкнувшийся игровой объект
+    private GameObject lastTriggerGo = null;
 
     private void Awake()
     {
@@ -37,5 +41,43 @@ public class Hero : MonoBehaviour
         transform.position = pos;
 
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Transform rootT = other.gameObject.transform.root;
+        GameObject go = rootT.gameObject;
+
+        // Гарантировать невозможность повторного столкновения с тем же объектом
+        if (go == lastTriggerGo) 
+        {
+            return;
+        }
+        lastTriggerGo = go;
+
+        // Если защитное поле столкнулось с вражеским кораблем...
+        if (go.tag == "Enemy") 
+        {
+            shieldLevel--; // Уменьшить уровень защиты на 1
+            Destroy(go); // Уничножить врага
+        }
+    }
+
+    public float shieldLevel 
+    {
+        get { return(_shieldLevel); }
+        set 
+        { 
+            _shieldLevel = Mathf.Min(value, 4);
+
+            // Если уровень поля упал до нуля или ниже
+            if (value < 0) 
+            {
+                Destroy(this.gameObject);
+
+                // Сообщить объекту Main.S о необходимости перезагрузить игру
+                Main.S.DelayedRestart(gameRestartDelay);
+            }
+        }
     }
 }
