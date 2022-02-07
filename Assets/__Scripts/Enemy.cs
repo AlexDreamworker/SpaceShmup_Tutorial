@@ -42,4 +42,14 @@ public class Enemy : MonoBehaviour
         pos = tempPos;
     }
 
+    void OnCollisionEnter(Collision coll)
+    {
+        GameObject otherGO = coll.gameObject;
+        if (otherGO.tag == "ProjectileHero") 
+        {
+            Destroy(otherGO); // Уничтожить снаряд
+            Destroy(gameObject); // Уничтожить игровой объект Enemy
+        }
+    }
+
 }

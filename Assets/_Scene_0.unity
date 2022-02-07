@@ -409,7 +409,10 @@ MonoBehaviour:
   speed: 30
   rollMult: -45
   pitchMult: 30
-  shieldLevel: 1
+  gameRestartDelay: 2
+  projectilePrefab: {fileID: 3705215040553038032, guid: 06dcd07671974d4449fe8722ab10c172, type: 3}
+  projectileSpeed: 40
+  _shieldLevel: 1
 --- !u!114 &923309504
 MonoBehaviour:
   m_ObjectHideFlags: 0
