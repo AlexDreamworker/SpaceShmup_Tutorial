@@ -12,6 +12,8 @@ public class Main : MonoBehaviour
     public float enemySpawnPerSecond = 0.5f;
     public float enemyDefaultPadding = 1.5f; // Отступ для позиционирования
 
+    public WeaponDefinition[] weaponDefinitions;
+
     private BoundsCheck bndCheck;
 
     private void Awake()
