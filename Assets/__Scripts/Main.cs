@@ -7,6 +7,8 @@ public class Main : MonoBehaviour
 {
     static public Main S;
 
+    static Dictionary<WeaponType, WeaponDefinition> WEAP_DICT;
+
     [Header("Set in Inspector")]
     public GameObject[] prefabEnemies;
     public float enemySpawnPerSecond = 0.5f;
@@ -23,6 +25,13 @@ public class Main : MonoBehaviour
 
         // Вызвать SpawnEnemy() один раз (в 2 секунды при значениях по умолчанию)
         Invoke("SpawnEnemy", 1f/enemySpawnPerSecond);
+
+        // Словарь с ключами типа WeaponType
+        WEAP_DICT = new Dictionary<WeaponType, WeaponDefinition>();
+        foreach (WeaponDefinition def in weaponDefinitions)
+        {
+            WEAP_DICT[def.type] = def;
+        }
     }
 
     public void SpawnEnemy() 
@@ -58,5 +67,26 @@ public class Main : MonoBehaviour
     public void Restart() 
     {
         SceneManager.LoadScene("_Scene_0");
+    }
+
+///<summary>
+/// Статическая функция, возвращающая WeaponDefinition из статического защищенного поля WEAP_DICT класса Main
+///</summary>
+///<returns> Экземпляр WeaponDefinition или, если нет такого определения для указанного WeaponType, 
+/// возвращает новый экземпляр WeaponDefinition с типом none. </returns>
+///<param name = "wt"> Тип оружия WeaponType, для которого требуется получить WeaponDefinition </param>
+
+    static public WeaponDefinition GetWeaponDefinition(WeaponType wt) 
+    {
+        // Проверить наличие указанного ключа в словаре
+        // Попытка извлечь значение по отсутствующему ключу вызовет ошибку, след. инструкция важна!
+        if (WEAP_DICT.ContainsKey(wt)) 
+        {
+            return(WEAP_DICT[wt]);
+        }
+
+        // Следующая инструкция возвращает новый экземпляр WeaponDefinition с типом оружия WeaponDefinition.none, 
+        // что означает неудачную попытку найти требуемое определение WeaponDefinition.
+        return (new WeaponDefinition());
     }
 }
