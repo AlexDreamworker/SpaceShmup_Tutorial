@@ -42,13 +42,44 @@ public class Enemy : MonoBehaviour
         pos = tempPos;
     }
 
-    void OnCollisionEnter(Collision coll)
+    // void OnCollisionEnter(Collision coll)
+    // {
+    //     GameObject otherGO = coll.gameObject;
+    //     if (otherGO.tag == "ProjectileHero") 
+    //     {
+    //         Destroy(otherGO); // Уничтожить снаряд
+    //         Destroy(gameObject); // Уничтожить игровой объект Enemy
+    //     }
+    // }
+
+    void OnCollisionEnter(Collision coll) 
     {
         GameObject otherGO = coll.gameObject;
-        if (otherGO.tag == "ProjectileHero") 
+        switch(otherGO.tag) 
         {
-            Destroy(otherGO); // Уничтожить снаряд
-            Destroy(gameObject); // Уничтожить игровой объект Enemy
+            case "ProjectileHero":
+                Projectile p = otherGO.GetComponent<Projectile>();
+
+                // Если вражеский корабль за границами экрана, не наносить ему повреждений
+                if (!bndCheck.isOnScreen) 
+                {
+                    Destroy(otherGO);
+                    break;
+                }
+
+                // Поразить вражеский корабль
+                // Получить разрушающую силу из WEAP_DICT в классе Main
+                health -= Main.GetWeaponDefinition(p.type).damageOnHit;
+                if (health <= 0)
+                {
+                    Destroy(this.gameObject);
+                }
+                Destroy(otherGO);
+                break;
+            
+            default:
+                print("Enemy hit by non-ProjectileHero: " + otherGO.name);
+                break;
         }
     }
 
